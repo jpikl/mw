@@ -21,4 +21,3 @@ find -iname '*.jpeg' | rew 'img_{C}.{e|l|r:e}'
 ```bash
 find -iname '*.jpeg' | rew 'img_{C}.{e|l|r:e}' -d | mvb
 ```
- 
