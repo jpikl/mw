@@ -5,21 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-### Added
-
-- `--explain-filter` flag to print an explanation like `--explain` but only for filters.
-
-### Changed
-
-- Repetition filter `*` can be used without its *value* parameter to repeat input instead (e.g., `*2` instead of `*2:abc`).
-- Column filter `&` is now called *Field filter*.
-- Global column separator is now called *Default field separator*.
-- Default field separator is `\s+` (regular expression) instead of `\t` (horizontal tab).
-- Simplified and more consistent parse error messages.
-- Parse error messages contains hint how to resolve the error.
-
 ## [0.3.0] - 2021-03-29
 
 ### Added

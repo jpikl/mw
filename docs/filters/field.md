@@ -6,7 +6,7 @@
 | `&N/S`  | Split value using regular expression `S`, output `N`-th field. |
 | `&N`    | Split value using default separator, output `N`-th field.       |
 
-The default field separator is regular expression `\s+`.
+The default field separator is *horizontal tab*.
 
 - Use `-s, --separator` option to change it to a string.
 - Use `-S, --separator-regex` option to change it to a regular expression.
@@ -20,8 +20,8 @@ Examples:
 
 | Input    | Pattern        | Output    | | Input    | Pattern         | Output    |
 | -------- | -------------- | --------- |-| -------- | --------------- | --------- |
-| `a1  b2` | `{&1}`         | `a1`      | | `a1  b2` | `{&-1}`         | `b2`      |
-| `a1  b2` | `{&2}`         | `b2`      | | `a1  b2` | `{&-2}`         | `a1`      |
+| `a1\tb2` | `{&1}`         | `a1`      | | `a1\tb2` | `{&-1}`         | `b2`      |
+| `a1\tb2` | `{&2}`         | `b2`      | | `a1\tb2` | `{&-2}`         | `a1`      |
 | `a1--b2` | `{&1:-}`       | `a1`      | | `a1--b2` | `{&-1:-}`       | `b2`      |
 | `a1--b2` | `{&2:-}`       | *(empty)* | | `a1--b2` | `{&-2:-}`       | *(empty)* |
 | `a1--b2` | `{&3:-}`       | `b2`      | | `a1--b2` | `{&-3:-}`       | `a1`      |
