@@ -1,4 +1,4 @@
-export OUTPUT_STANDALONE=true
+export OUTPUT_SINGLE_PAGE=true
 export OUTPUT_PDF=true
 
 export CSS_RULES="
