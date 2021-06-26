@@ -1,6 +1,7 @@
 name: Deploy pages
 
 on:
+  workflow_dispatch:
   push:
     branches: [ stable-docs ]
     paths: [ 'docs/**', 'CHANGELOG.md' , 'LICENSE.md' ]
