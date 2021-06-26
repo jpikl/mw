@@ -2,12 +2,22 @@
 
 > ℹ️ Use `rew --explain <pattern>` to print detailed explanation what a certain pattern does.
 
-Print contents of your current working directory as absolute paths.
+## Path processing
+
+Print contents of the current working directory as absolute paths.
 
 ```bash
-rew '{a}' *    # Paths are passed as arguments, wildcard expansion is done by shell
-ls | rew '{a}' # Paths are read from standard input
+rew '{a}' *
 ```
+
+The previous `*` shell expansion would not work for an empty directory.
+As a workaround, we can read paths from standard input.
+
+```bash
+dir | rew '{a}'
+```
+
+## Batch rename
 
 Rename all `*.jpeg` files to `*.jpg`.
 
@@ -15,40 +25,10 @@ Rename all `*.jpeg` files to `*.jpg`.
 find -name '*.jpeg' | rew -d '{B}.jpg' | mvb -v
 ```
 
-Same thing but we use `rew` to generate executable shell code.
+The same thing but we generate and execute shell code.
 
 ```bash
 find -name '*.jpeg' | rew -q 'mv -v {} {B}.jpg' | sh
-```
-
-Make backup copy of each `*.txt` file with `.txt.bak` extension in the same directory.
-
-```bash
-find -name '*.txt'  | rew -d '{}.bak'  | cpb -v
-```
-
-Copy `*.txt` files (keep directory structure) to the `~/Backup` directory.
-
-```bash
-find -name '*.txt'  | rew -d "$HOME/Backup/{p}"  | cpb -v
-```
-
-Copy `*.txt` files (flatten directory structure) to the `~/Backup` directory.
-
-```bash
-find -name '*.txt'  | rew -d "$HOME/Backup/{f}"  | cpb -v
-```
-
-Same thing but we append randomly generated suffix after base name to avoid name collisions.
-
-```bash
-find -name '*.txt'  | rew -d "$HOME/Backup/{b}_{U}.{e}"  | cpb -v
-```
-
-Flatten directory structure `./dir/subdir/` to `./dir_subdir/`.
-
-```bash
-find -mindepth 2 -maxdepth 2 -type d | rew -d '{D}_{F}' | mvb -v
 ```
 
 Normalize base names of files to `file_001`, `file_002`, ...
@@ -57,11 +37,72 @@ Normalize base names of files to `file_001`, `file_002`, ...
 find -type f | rew -d '{d}/file_{C|<3:0}{E}' | mvb -v
 ```
 
-Print the first word of each line with removed diacritics (accents).
+Flatten directory structure `./dir/subdir/` to `./dir_subdir/`.
 
 ```bash
-rew '{=\S+|i}' <input.txt
+find -mindepth 2 -maxdepth 2 -type d | rew -d '{D}_{F}' | mvb -v
 ```
+
+## Batch copy
+
+Make backup copy of each `*.txt` file with `.txt.bak` extension in the same directory.
+
+```bash
+find -name '*.txt'  | rew -d '{}.bak'  | cpb -v
+```
+
+Copy `*.txt` files to the `~/Backup` directory. Preserve directory structure.
+
+```bash
+find -name '*.txt'  | rew -d "$HOME/Backup/{p}"  | cpb -v
+```
+
+The same thing but with collapsed output directory structure.
+
+```bash
+find -name '*.txt'  | rew -d "$HOME/Backup/{f}"  | cpb -v
+```
+
+The same thing but we also append randomly generated base name suffix to avoid collisions.
+
+```bash
+find -name '*.txt'  | rew -d "$HOME/Backup/{b}_{U}.{e}"  | cpb -v
+```
+
+## Text processing
+
+Normalize line endings in a file to `LF`
+
+````bash
+rew <input.txt >output.txt # LF is the default output terminator
+````
+
+Normalize line endings in a file to `CR+LF`.
+
+````bash
+rew -T$'\r\n' <input.txt >output.txt
+````
+
+Replace tabs with 4 spaces.
+
+````bash
+rew '{R:%t:    }' <input.txt >output.txt
+````
+
+That would also normalize line endings.
+To prevent such behaviour, we can process the text as a whole.
+
+````bash
+rew -rR '{R:%t:    }' <input.txt >output.txt
+````
+
+Print the first word from each line in lowercase and with removed diacritics (accents).
+
+```bash
+rew '{=\S+|v|i}' <input.txt
+```
+
+## CSV editing
 
 Swap the first and second column in a CSV file.
 
@@ -69,33 +110,8 @@ Swap the first and second column in a CSV file.
 rew -e'([^:]*):([^:]*):(.*)' '{$2}:{$1}:{$3}' <input.csv >output.csv
 ```
 
-Same thing but we use regex replace filter.
+The same thing but we use regex replace filter.
 
 ```bash
 rew '{s/([^:]*):([^:]*):(.*)/$2:$1:$3}' <input.csv >output.csv
 ```
-
-Print `PATH` variable entries as lines.
-
-````bash
-echo "$PATH" | rew -t: # PATH entries are separated by colon
-````
-
-Replace tabs with 4 spaces in a file.
-
-````bash
-rew -rR '{R:%t:    }' <input.txt >output.txt # Read/write file content as a whole
-````
-
-Normalize line endings in a file to `LF`.
-
-````bash
-rew <input.txt >output.txt # LF is the default output line terminator
-````
-
-Normalize line endings in a file to `CR+LF`.
-
-````bash
-rew -T$'\r\n'   <input.txt >output.txt # CR+LF output terminator using -T option
-rew -R '{}%r%n' <input.txt >output.txt # CR+LF output terminator in pattern
-````

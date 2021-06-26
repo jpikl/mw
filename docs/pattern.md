@@ -61,5 +61,5 @@ Use `--escape` option to set a different escape character.
 
 ```bash
 rew '{R:%t: }'              # Replace tabs with spaces
-rew '{R:\t: }' --escape='\' # Same thing, different escape character
+rew '{R:\t: }' --escape='\' # The same thing, different escape character
 ```
