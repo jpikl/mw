@@ -107,11 +107,11 @@ rew '{=\S+|v|i}' <input.txt
 Swap the first and second column in a CSV file.
 
 ```bash
-rew -e'([^:]*):([^:]*):(.*)' '{$2}:{$1}:{$3}' <input.csv >output.csv
+rew -e'([^,]*),([^,]*),(.*)' '{$2},{$1},{$3}' <input.csv >output.csv
 ```
 
 The same thing but we use regex replace filter.
 
 ```bash
-rew '{s/([^:]*):([^:]*):(.*)/$2:$1:$3}' <input.csv >output.csv
+rew '{s/([^,]*),([^,]*),(.*)/$2,$1,$3}' <input.csv >output.csv
 ```
