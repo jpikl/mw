@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<title>rew | 🔬 Comparison</title>
+<meta name="description" content="A text processing CLI tool that rewrites FS paths according to a pattern.">
+<meta name="keywords" content="rename-files, copy-files, replace-text, command-line, text-processing, rust, tool, command-line-tool, terminal, regex">
+<meta name="generator" content="https://github.com/jpikl/hatcher">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/rew/style.css">
+<script defer src="/rew/script.js"></script><script>document.documentElement.setAttribute("data-theme", localStorage.theme || "light");</script>
+</head>
+<body>
+<a id="nav-open"></a>
+<header id="header">
+<a id="hide-nav-toggle" class="nav-toggle" title="Hide navigation" role="button" onclick="focusId('show-nav-toggle')" aria-pressed="true" href="#">☰</a>
+<a id="show-nav-toggle" class="nav-toggle" title="Show navigation" role="button" onclick="focusId('hide-nav-toggle')" aria-pressed="false" href="#nav-open">☰</a>
+<h1 id="header-title" title="A text processing CLI tool that rewrites FS paths according to a pattern.">
+<a class="header-link" href="/rew/">rew</a>
+</h1>
+<nav id="header-nav">
+<ul id="header-nav-list">
+<li class="header-nav-item">
+<a  id="github-header-link" class="header-link" href="https://github.com/jpikl/rew" rel="external" title="GitHub repository for project jpikl/rew">
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="24" height="24">
+<title>GitHub logo</title>
+<path d="
+  M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577
+  0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633
+  17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809
+  1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38
+  1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405
+  1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84
+  1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015
+  3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12
+"/>
+</svg>
+GitHub
+</a>
+</li>
+</ul>
+</nav>
+<label id="theme-switch" title="Switch between light and dark theme" disabled>
+<input id="theme-switch-input" type="checkbox">
+<span id="dark-theme-switch-icon" class="theme-switch-icon" aria-hidden="true">🌜</span>
+<span id="theme-switch-track" aria-hidden="true"></span>
+<span id="light-theme-switch-icon" class="theme-switch-icon" aria-hidden="true">🌞</span>
+</label>
+</header>
+<div id="page">
+<nav id="nav">
+<ul class="nav-list">
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/">💡 Overview</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/install">📦 Installation</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/usage">🚀 Usage</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/pattern">✏️ Pattern</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/filters">🕶 Filters</a>
+<ul class="nav-list">
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/filters/path">🛤 Path filters</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/filters/substr">🆎 Substring filters</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/filters/field">📊 Field filters</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/filters/replace">🔍 Replace filters</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/filters/regex">⭐️ Regex filters</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/filters/format">🎨 Format filters</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/filters/generate">🏭 Generators</a>
+</li>
+</ul>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/input">⌨️ Input</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/output">💬 Output</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/examples">🗃 Examples</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link is-active" href="/rew/compare">🔬 Comparison</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/changelog">📈 Changelog</a>
+</li>
+<li class="nav-item">
+<a class="nav-label nav-link" href="/rew/license">📃 License</a>
+</li>
+</ul>
+</nav>
+<main id="main">
+<article id="content">
+<!-- pandoc output start -->
+<h1 id="comparison" class="heading">🔬 Comparison <a class="heading-anchor" href="#comparison">#</a></h1>
+<p>Let us compare <code>rew</code> to a variety of existing tools.</p>
+<h2 id="rename" class="heading">rename <a class="heading-anchor" href="#rename">#</a></h2>
+<p>Both <code>rename</code> abd <code>rew</code> can be used to rename multiple files.</p>
+<p><code>rename</code> requires all inputs to be passed as arguments. This means you have to use <code>xargs</code> when processing output of <code>find</code>. <code>rew</code> can read values directly from standard input.</p>
+<p>Additionally, <code>rew</code> is only a text-processing tool and cannot rename files by itself. You have to use accompanying <code>mvb</code> / <code>cpb</code> utilities, or you can generate and execute shell code.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="fu">xargs</span> rename .jpeg .jpg     <span class="co"># Rename *.jpeg files to *.jpg</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&#39;{B}.jpg&#39;</span> <span class="kw">|</span> <span class="ex">mvb</span>      <span class="co"># The same thing using rew + mvb</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-q</span> <span class="st">&#39;mv {} {B}.jpg&#39;</span> <span class="kw">|</span> <span class="fu">sh</span> <span class="co"># The same thing using rew + mv + sh</span></span></code></pre></div>
+<h2 id="dirname" class="heading">dirname <a class="heading-anchor" href="#dirname">#</a></h2>
+<p>Both <code>dirname</code> and <code>rew</code> can remove last component from a path:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dirname</span> <span class="st">&#39;dir/file.txt&#39;</span>   <span class="co"># Will print &quot;dir&quot;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{d}&#39;</span> <span class="st">&#39;dir/file.txt&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h2 id="basename" class="heading">basename <a class="heading-anchor" href="#basename">#</a></h2>
+<p>Both <code>basename</code> and <code>rew</code> can remove leading directories from a path:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">basename</span> <span class="st">&#39;dir/file.txt&#39;</span>  <span class="co"># Will print &quot;file.txt&quot;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{f}&#39;</span> <span class="st">&#39;dir/file.txt&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p><code>basename</code> can additionally remove filename extension, but we have to manually provide it as a suffix. <code>rew</code> is able to remove filename extension automatically:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">basename</span> <span class="st">&#39;dir/file.txt&#39;</span> <span class="st">&#39;.txt&#39;</span> <span class="co"># Will print &quot;file&quot;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{b}&#39;</span> <span class="st">&#39;dir/file.txt&#39;</span>       <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>In case the suffix does not represent an extension, <code>rew</code> requires an additional filter to remove it:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">basename</span> <span class="st">&#39;dir/file_txt&#39;</span> <span class="st">&#39;_txt&#39;</span>   <span class="co"># Will print &quot;file&quot;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{f|s:_txt$}&#39;</span> <span class="st">&#39;dir/file_txt&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h2 id="realpath" class="heading">realpath <a class="heading-anchor" href="#realpath">#</a></h2>
+<p>Both <code>realpath</code> and <code>rew</code> can resolve canonical form of a path:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">realpath</span> <span class="at">-e</span> <span class="st">&#39;/usr/../home&#39;</span> <span class="co"># Will print &quot;/home&quot;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{P}&#39;</span> <span class="st">&#39;/usr/../home&#39;</span>   <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>Or they can both compute a relative path:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">realpath</span> <span class="at">--relative-to</span><span class="op">=</span><span class="st">&#39;/home&#39;</span> <span class="st">&#39;/usr&#39;</span> <span class="co"># Will print &quot;../usr&quot;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="at">-w</span> <span class="st">&#39;/home&#39;</span> <span class="st">&#39;{A}&#39;</span> <span class="st">&#39;/usr&#39;</span>           <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h2 id="pwd" class="heading">pwd <a class="heading-anchor" href="#pwd">#</a></h2>
+<p>Both <code>pwd</code> and <code>rew</code> can print the current working directory:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span>                     <span class="co"># pwd is obviously easier to use</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{w}&#39;</span> <span class="st">&#39;&lt;any value&gt;&#39;</span> <span class="co"># rew requires an additional input</span></span></code></pre></div>
+<h2 id="sed" class="heading">sed <a class="heading-anchor" href="#sed">#</a></h2>
+<p>Both <code>sed</code> and <code>rew</code> can replace text matching a regular expression:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;12 ab 34&#39;</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="at">-E</span> <span class="st">&#39;s/([0-9]+)/_\1_/g&#39;</span> <span class="co"># Will print &quot;_12_ ab _34_&quot;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;12 ab 34&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{S:(\d+):_$1_}&#39;</span>       <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h2 id="cut" class="heading">cut <a class="heading-anchor" href="#cut">#</a></h2>
+<p>Both <code>cut</code> and <code>rew</code> can print substring:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;abcde&#39;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-c</span> <span class="st">&#39;2-4&#39;</span> <span class="co"># Will print &quot;bcd&quot;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;abcde&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{#2-4}&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>Or they can both print fields:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab,cd,ef&#39;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="st">&#39;,&#39;</span> <span class="at">-f2</span>    <span class="co"># Will print &quot;cd&quot;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab,cd,ef&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-s</span><span class="st">&#39;,&#39;</span> <span class="st">&#39;{&amp;2}&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h2 id="awk" class="heading">awk <a class="heading-anchor" href="#awk">#</a></h2>
+<p><code>awk</code> is obviously a more powerful tool than <code>rew</code>. However, there are some use cases where <code>rew</code> can replace <code>awk</code> using more compact pattern syntax.</p>
+<p>Printing substring:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;abcde&#39;</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;{print substr($0,2,3)}&#39;</span> <span class="co"># Will print &quot;bcd&quot;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;abcde&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{#2+3}&#39;</span>                 <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>Printing field:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab,cd,ef&#39;</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F</span><span class="st">&#39;,&#39;</span> <span class="st">&#39;{print $2}&#39;</span> <span class="co"># Will print &quot;cd&quot;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab,cd,ef&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-s</span><span class="st">&#39;,&#39;</span> <span class="st">&#39;{&amp;2}&#39;</span>       <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>Printing first match of a regular expression:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab 12 cd&#39;</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;match($0,/[0-9]+/) {print substr($0,RSTART,RLENGTH)}&#39;</span> <span class="co"># Will print &quot;12&quot;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab 12 cd&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{=\d+}&#39;</span>                                               <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h2 id="grep" class="heading">grep <a class="heading-anchor" href="#grep">#</a></h2>
+<p>Both <code>grep</code> and <code>rew</code> can print matches of a regular expression:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab 12 cd&#39;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-Po</span> <span class="st">&#39;\d+&#39;</span> <span class="co"># Will print &quot;12&quot;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab 12 cd&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{=\d+}&#39;</span>   <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>If an input line contains multiple matches, <code>grep</code> will print each on a separate line. <code>rew</code> will, however, print only the first match from each line. This is because <code>rew</code> transforms lines in 1-to-1 correspondence.</p>
+<p>In this particular case, we can workaround it, using raw output mode <code>-R</code> and regex replace filters <code>sS</code>.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;12 ab 34&#39;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-Po</span> <span class="st">&#39;\d+&#39;</span>                        <span class="co"># Will print &quot;12&quot; and &quot;34&quot;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;12 ab 34&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-R</span> <span class="st">&#39;{s:^\D+$|S:\D*(\d+)\D*:$1%n}&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<!-- pandoc output end -->
+</article>
+<nav id="steps">
+<ul id="step-list">
+<li id="prev-step" class="step">
+<a class="step-link" href="/rew/examples" rel="prev">
+<span class="step-direction">« Previous</span>
+<span class="step-label">🗃 Examples</span>
+</a>
+</li>
+<li id="next-step" class="step">
+<a class="step-link" href="/rew/changelog" rel="next">
+<span class="step-direction">Next »</span>
+<span class="step-label">📈 Changelog</span>
+</a>
+</li>
+</ul>
+</nav>
+</main>
+</div>
+<footer id="footer">
+<ul id="footer-items">
+<li id="copyright-footer-item" class="footer-item">
+© 2020 Jan Pikl
+</li>
+<li id="single-page-footer-item" class="footer-item">
+<a href="/rew/all-in-one" rel="alternate" media="print">Single-page version</a>
+</li>
+<li id="pdf-footer-item" class="footer-item">
+<a href="/rew/rew.pdf" rel="alternate" type="application/pdf">PDF version</a>
+</li>
+<li id="generator-footer-item" class="footer-item">
+Generated by <a href="https://github.com/jpikl/hatcher" rel="external">hatcher</a>
+</li>
+</ul>
+</footer>
+</body>
+</html>

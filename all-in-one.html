@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<title>rew | Single-page version</title>
+<meta name="description" content="A text processing CLI tool that rewrites FS paths according to a pattern.">
+<meta name="keywords" content="rename-files, copy-files, replace-text, command-line, text-processing, rust, tool, command-line-tool, terminal, regex">
+<meta name="generator" content="https://github.com/jpikl/hatcher">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/rew/style.css">
+<script defer src="/rew/script.js"></script><script>document.documentElement.setAttribute("data-theme", localStorage.theme || "light");</script>
+</head>
+<body>
+<header id="sp-header">
+<nav id="sp-header-nav">
+« <a href="/rew/">Multi-page version</a></nav>
+</header>
+<main id="sp-main">
+<h1 title="A text processing CLI tool that rewrites FS paths according to a pattern.">rew</h1>
+<nav id="sp-nav">
+<ul>
+<li>
+<a href="#section-index">💡 Overview</a>
+</li>
+<li>
+<a href="#section-install">📦 Installation</a>
+</li>
+<li>
+<a href="#section-usage">🚀 Usage</a>
+</li>
+<li>
+<a href="#section-pattern">✏️ Pattern</a>
+</li>
+<li>
+<a href="#section-filters-index">🕶 Filters</a>
+<ul>
+<li>
+<a href="#section-filters-path">🛤 Path filters</a>
+</li>
+<li>
+<a href="#section-filters-substr">🆎 Substring filters</a>
+</li>
+<li>
+<a href="#section-filters-field">📊 Field filters</a>
+</li>
+<li>
+<a href="#section-filters-replace">🔍 Replace filters</a>
+</li>
+<li>
+<a href="#section-filters-regex">⭐️ Regex filters</a>
+</li>
+<li>
+<a href="#section-filters-format">🎨 Format filters</a>
+</li>
+<li>
+<a href="#section-filters-generate">🏭 Generators</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#section-input">⌨️ Input</a>
+</li>
+<li>
+<a href="#section-output">💬 Output</a>
+</li>
+<li>
+<a href="#section-examples">🗃 Examples</a>
+</li>
+<li>
+<a href="#section-compare">🔬 Comparison</a>
+</li>
+<li>
+<a href="#section-changelog">📈 Changelog</a>
+</li>
+<li>
+<a href="#section-license">📃 License</a>
+</li>
+</ul>
+</nav>
+<!-- pandoc output start -->
+<p><a id="section-index"></a></p>
+<h2 id="overview" class="heading">💡 Overview <a class="heading-anchor" href="#overview">#</a></h2>
+<p><code>rew</code> is a text processing CLI tool that rewrites FS paths according to a pattern.</p>
+<h3 id="how-rew-works" class="heading">How rew works <a class="heading-anchor" href="#how-rew-works">#</a></h3>
+<ol type="1">
+<li>Reads values from standard <a href="#section-input">input</a>.</li>
+<li>Rewrites them according to a <a href="#section-pattern">pattern</a>.</li>
+<li>Prints results to standard <a href="#section-output">output</a>.</li>
+</ol>
+<figure>
+<img src="images/diagram.svg" alt="How rew works" /><figcaption aria-hidden="true">How rew works</figcaption>
+</figure>
+<p>Input values are assumed to be FS paths, however, <code>rew</code> is able to process any UTF-8 encoded text.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-iname</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;img_{C}.{e|l|r:e}&#39;</span></span></code></pre></div>
+<p><code>rew</code> is also distributed with two accompanying utilities (<code>mvb</code> and <code>cpb</code>) which move/copy files and directories, based on <code>rew</code> output.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-iname</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;img_{C}.{e|l|r:e}&#39;</span> <span class="at">-d</span> <span class="kw">|</span> <span class="ex">mvb</span></span></code></pre></div>
+<p><a id="section-install"></a></p>
+<h2 id="installation" class="heading">📦 Installation <a class="heading-anchor" href="#installation">#</a></h2>
+<p>The latest release is available for <a href="https://github.com/jpikl/rew/releases/latest">download on GitHub</a>.</p>
+<p>Alternatively, you can build <code>rew</code> from sources:</p>
+<ul>
+<li><p>Set up a <a href="https://www.rust-lang.org/learn/get-started">Rust development environment</a>.</p></li>
+<li><p>Install the latest release using <code>cargo</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cargo</span> install rew</span></code></pre></div></li>
+<li><p>Binaries will be installed to <code>.cargo/bin/</code> in your home directory.</p></li>
+</ul>
+<p><a id="section-usage"></a></p>
+<h2 id="usage" class="heading">🚀 Usage <a class="heading-anchor" href="#usage">#</a></h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> [options] [--] [pattern] [values]...</span></code></pre></div>
+<p>When no values are provided, they are read from standard input instead.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">input</span> <span class="kw">|</span> <span class="ex">rew</span> [options] [--] [pattern]</span></code></pre></div>
+<p>When no pattern is provided, values are directly copied to standard output.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">input</span> <span class="kw">|</span> <span class="ex">rew</span> [options]</span></code></pre></div>
+<p>Use <code>-d, --diff</code> flag when piping output to <code>mvb</code> / <code>cpb</code> utilities to perform bulk move/copy.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> [options] [--] [pattern] <span class="at">-d</span> <span class="kw">|</span> <span class="ex">mvb</span></span></code></pre></div>
+<p>Use <code>-h</code> flag to print short help, <code>--help</code> to print detailed help.</p>
+<p><a id="section-pattern"></a></p>
+<h2 id="pattern" class="heading">✏️ Pattern <a class="heading-anchor" href="#pattern">#</a></h2>
+<p>Pattern is a string describing how to generate output from an input.</p>
+<p>Use <code>--explain</code> flag to print detailed explanation what a certain pattern does.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="at">--explain</span> <span class="st">&#39;file_{c|&lt;3:0}.{e}&#39;</span></span></code></pre></div>
+<h3 id="syntax" class="heading">Syntax <a class="heading-anchor" href="#syntax">#</a></h3>
+<p>By default, pattern characters are directly copied to output.</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Pattern</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>(any)</em></td>
+<td><code>abc</code></td>
+<td><code>abc</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Characters <code>{</code> and <code>}</code> form an expression which is evaluated and replaced in output. Empty expression <code>{}</code> evaluates directly to input value.</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Pattern</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>world</code></td>
+<td><code>{}</code></td>
+<td><code>world</code></td>
+</tr>
+<tr class="even">
+<td><code>world</code></td>
+<td><code>Hello, {}!</code></td>
+<td><code>Hello, world!</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Expression may contain one or more <a href="filters">filters</a>, separated by <code>|</code>. Filters are consecutively applied on input value.</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Pattern</th>
+<th>Output</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>old.JPEG</code></td>
+<td><code>new.{e}</code></td>
+<td><code>new.JPEG</code></td>
+<td>Extension</td>
+</tr>
+<tr class="even">
+<td><code>old.JPEG</code></td>
+<td><code>new.{e|l}</code></td>
+<td><code>new.jpeg</code></td>
+<td>Extension, Lowercase</td>
+</tr>
+<tr class="odd">
+<td><code>old.JPEG</code></td>
+<td><code>new.{e|l|r:e}</code></td>
+<td><code>new.jpg</code></td>
+<td>Extension, Lowercase, Remove <code>e</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Use <code>-q, --quote</code> flag to automatically wrap output of every expression in quotes.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> abc <span class="kw">|</span> <span class="ex">rew</span> {}     <span class="co"># Will print  abc</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> abc <span class="kw">|</span> <span class="ex">rew</span> {} <span class="at">-q</span>  <span class="co"># Will print &#39;abc&#39;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> abc <span class="kw">|</span> <span class="ex">rew</span> {} <span class="at">-qq</span> <span class="co"># Will print &quot;abc&quot;</span></span></code></pre></div>
+<h3 id="escaping" class="heading">Escaping <a class="heading-anchor" href="#escaping">#</a></h3>
+<p>Character <code>%</code> starts an escape sequence.</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Sequence</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>%/</code></td>
+<td>System directory separator<br><small><code>\</code> on Windows<br><code>/</code> everywhere else</small></td>
+</tr>
+<tr class="even">
+<td><code>%n</code></td>
+<td>Line feed</td>
+</tr>
+<tr class="odd">
+<td><code>%r</code></td>
+<td>Carriage return</td>
+</tr>
+<tr class="even">
+<td><code>%t</code></td>
+<td>Horizontal tab</td>
+</tr>
+<tr class="odd">
+<td><code>%0</code></td>
+<td>Null</td>
+</tr>
+<tr class="even">
+<td><code>%{</code></td>
+<td>Escaped <code>{</code></td>
+</tr>
+<tr class="odd">
+<td><code>%|</code></td>
+<td>Escaped <code>|</code></td>
+</tr>
+<tr class="even">
+<td><code>%}</code></td>
+<td>Escaped <code>{</code></td>
+</tr>
+<tr class="odd">
+<td><code>%%</code></td>
+<td>Escaped <code>%</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Use <code>--escape</code> option to set a different escape character.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{R:%t: }&#39;</span>              <span class="co"># Replace tabs with spaces</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{R:\t: }&#39;</span> <span class="at">--escape</span><span class="op">=</span><span class="st">&#39;\&#39;</span> <span class="co"># The same thing, different escape character</span></span></code></pre></div>
+<p><a id="section-filters-index"></a></p>
+<h2 id="filters" class="heading">🕶 Filters <a class="heading-anchor" href="#filters">#</a></h2>
+<p>Filters are categorized into the following groups.</p>
+<ul>
+<li>🛤 <a href="#section-filters-path">Path filters</a></li>
+<li>🆎 <a href="#section-filters-substr">Substring filters</a></li>
+<li>📊 <a href="#section-filters-field">Field filters</a></li>
+<li>🔍 <a href="#section-filters-replace">Replace filters</a></li>
+<li>⭐️ <a href="#section-filters-regex">Regex filters</a></li>
+<li>🎨 <a href="#section-filters-format">Format filters</a></li>
+<li>🏭 <a href="#section-filters-generate">Generators</a></li>
+</ul>
+<p><a id="section-filters-path"></a></p>
+<h3 id="path-filters" class="heading">🛤 Path filters <a class="heading-anchor" href="#path-filters">#</a></h3>
+<p>Path filters assume that their input value is a FS path.</p>
+<h4 id="path-components" class="heading">Path components <a class="heading-anchor" href="#path-components">#</a></h4>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Description</th>
+<th></th>
+<th>Filter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>d</code></td>
+<td>Parent directory</td>
+<td></td>
+<td><code>D</code></td>
+<td>Remove last name</td>
+</tr>
+<tr class="even">
+<td><code>f</code></td>
+<td>File name</td>
+<td></td>
+<td><code>F</code></td>
+<td>Last name</td>
+</tr>
+<tr class="odd">
+<td><code>b</code></td>
+<td>Base name</td>
+<td></td>
+<td><code>B</code></td>
+<td>Remove extension</td>
+</tr>
+<tr class="even">
+<td><code>e</code></td>
+<td>Extension</td>
+<td></td>
+<td><code>E</code></td>
+<td>Extension with dot</td>
+</tr>
+</tbody>
+</table></div>
+<p>For input value <code>/home/alice/notes.txt</code>, filters would evaluate to:</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Pattern</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>{}</code></td>
+<td><code>/home/alice/notes.txt</code></td>
+</tr>
+<tr class="even">
+<td><code>{d}</code>, <code>{D}</code></td>
+<td><code>/home/alice</code></td>
+</tr>
+<tr class="odd">
+<td><code>{f}</code>, <code>{F}</code></td>
+<td><code>notes.txt</code></td>
+</tr>
+<tr class="even">
+<td><code>{b}</code></td>
+<td><code>notes</code></td>
+</tr>
+<tr class="odd">
+<td><code>{B}</code></td>
+<td><code>/home/alice/notes</code></td>
+</tr>
+<tr class="even">
+<td><code>{e}</code></td>
+<td><code>txt</code></td>
+</tr>
+<tr class="odd">
+<td><code>{E}</code></td>
+<td><code>.txt</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Parent directory <code>d</code> might give a different result than <code>D</code> which removes last name of a path. Similarly, file name <code>f</code> might not be the same as last name <code>F</code> which is a complement of <code>D</code>.</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th><code>{d}</code></th>
+<th><code>{D}</code></th>
+<th><code>{f}</code></th>
+<th><code>{F}</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>/</code></td>
+<td><code>/</code></td>
+<td><code>/</code></td>
+<td><em>(empty)</em></td>
+<td><em>(empty)</em></td>
+</tr>
+<tr class="even">
+<td><code>/a</code></td>
+<td><code>/</code></td>
+<td><code>/</code></td>
+<td><code>a</code></td>
+<td><code>a</code></td>
+</tr>
+<tr class="odd">
+<td><code>a/b</code></td>
+<td><code>a</code></td>
+<td><code>a</code></td>
+<td><code>b</code></td>
+<td><code>b</code></td>
+</tr>
+<tr class="even">
+<td><code>a</code></td>
+<td><code>.</code></td>
+<td><em>(empty)</em></td>
+<td><code>a</code></td>
+<td><code>a</code></td>
+</tr>
+<tr class="odd">
+<td><code>.</code></td>
+<td><code>./..</code></td>
+<td><em>(empty)</em></td>
+<td><em>(empty)</em></td>
+<td><code>.</code></td>
+</tr>
+<tr class="even">
+<td><code>..</code></td>
+<td><code>../..</code></td>
+<td><em>(empty)</em></td>
+<td><em>(empty)</em></td>
+<td><code>..</code></td>
+</tr>
+<tr class="odd">
+<td><em>(empty)</em></td>
+<td><code>..</code></td>
+<td><em>(empty)</em></td>
+<td><em>(empty)</em></td>
+<td><em>(empty)</em></td>
+</tr>
+</tbody>
+</table></div>
+<p>Extension with dot <code>E</code> can be useful when dealing with files with no extension.</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th><code>new.{e}</code></th>
+<th><code>new{E}</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>old.txt</code></td>
+<td><code>new.txt</code></td>
+<td><code>new.txt</code></td>
+</tr>
+<tr class="even">
+<td><code>old</code></td>
+<td><code>new.</code></td>
+<td><code>new</code></td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="absolute-and-relative-paths" class="heading">Absolute and relative paths <a class="heading-anchor" href="#absolute-and-relative-paths">#</a></h4>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>w</code></td>
+<td>Working directory</td>
+</tr>
+<tr class="even">
+<td><code>a</code></td>
+<td>Absolute path</td>
+</tr>
+<tr class="odd">
+<td><code>A</code></td>
+<td>Relative path</td>
+</tr>
+</tbody>
+</table></div>
+<p>Absolute path <code>a</code> and relative path <code>A</code> are both resolved against working directory <code>w</code>.</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th><code>{w}</code></th>
+<th>Input</th>
+<th><code>{a}</code></th>
+<th><code>{A}</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>/home/alice</code></td>
+<td><code>/home/bob</code></td>
+<td><code>/home/bob</code></td>
+<td><code>../bob</code></td>
+</tr>
+<tr class="even">
+<td><code>/home/alice</code></td>
+<td><code>../bob</code></td>
+<td><code>/home/bob</code></td>
+<td><code>../bob</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>By default, working directory <code>w</code> is set to your current working directory. You can change that using the <code>-w, --working-directory</code> option. <code>w</code> filter will always output an absolute path, even if you set a relative one using the <code>-w</code> option.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="at">-w</span> <span class="st">&#39;/home/alice&#39;</span> <span class="st">&#39;{w}&#39;</span> <span class="co"># Absolute path</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="at">-w</span> <span class="st">&#39;../alice&#39;</span>    <span class="st">&#39;{w}&#39;</span> <span class="co"># Relative to your current working directory</span></span></code></pre></div>
+<h4 id="path-normalization" class="heading">Path normalization <a class="heading-anchor" href="#path-normalization">#</a></h4>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>p</code></td>
+<td>Normalized path</td>
+</tr>
+<tr class="even">
+<td><code>P</code></td>
+<td>Canonical path</td>
+</tr>
+</tbody>
+</table></div>
+<p>Normalized path <code>p</code> is constructed using the following rules:</p>
+<ul>
+<li>On Windows, all <code>/</code> separators are converted to <code>\</code>.</li>
+<li>Consecutive directory separators are collapsed into one.</li>
+<li>Non-root trailing directory separator is removed.</li>
+<li>Unnecessary current directory <code>.</code> components are removed.</li>
+<li>Parent directory <code>..</code> components are resolved where possible.</li>
+<li>Initial <code>..</code> components in an absolute path are dropped.</li>
+<li>Initial <code>..</code> components in a relative path are kept.</li>
+<li>Empty path is resolved to <code>.</code> (current directory).</li>
+</ul>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Output</th>
+<th></th>
+<th>Input</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>(empty)</em></td>
+<td><code>.</code></td>
+<td></td>
+<td><code>/</code></td>
+<td><code>/</code></td>
+</tr>
+<tr class="even">
+<td><code>.</code></td>
+<td><code>.</code></td>
+<td></td>
+<td><code>/.</code></td>
+<td><code>/</code></td>
+</tr>
+<tr class="odd">
+<td><code>..</code></td>
+<td><code>..</code></td>
+<td></td>
+<td><code>/..</code></td>
+<td><code>/</code></td>
+</tr>
+<tr class="even">
+<td><code>a/</code></td>
+<td><code>a</code></td>
+<td></td>
+<td><code>/a/</code></td>
+<td><code>/a</code></td>
+</tr>
+<tr class="odd">
+<td><code>a//</code></td>
+<td><code>a</code></td>
+<td></td>
+<td><code>/a//</code></td>
+<td><code>/a</code></td>
+</tr>
+<tr class="even">
+<td><code>a/.</code></td>
+<td><code>a</code></td>
+<td></td>
+<td><code>/a/.</code></td>
+<td><code>/a</code></td>
+</tr>
+<tr class="odd">
+<td><code>a/..</code></td>
+<td><code>.</code></td>
+<td></td>
+<td><code>/a/..</code></td>
+<td><code>/</code></td>
+</tr>
+<tr class="even">
+<td><code>./a</code></td>
+<td><code>a</code></td>
+<td></td>
+<td><code>/./a</code></td>
+<td><code>/a</code></td>
+</tr>
+<tr class="odd">
+<td><code>../a</code></td>
+<td><code>../a</code></td>
+<td></td>
+<td><code>/../a</code></td>
+<td><code>/a</code></td>
+</tr>
+<tr class="even">
+<td><code>a//b</code></td>
+<td><code>a/b</code></td>
+<td></td>
+<td><code>/a//b</code></td>
+<td><code>/a/b</code></td>
+</tr>
+<tr class="odd">
+<td><code>a/./b</code></td>
+<td><code>a/b</code></td>
+<td></td>
+<td><code>/a/./b</code></td>
+<td><code>/a/b</code></td>
+</tr>
+<tr class="even">
+<td><code>a/../b</code></td>
+<td><code>b</code></td>
+<td></td>
+<td><code>/a/../b</code></td>
+<td><code>/b</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Canonical path <code>P</code> works similarly to <code>p</code> but has some differences:</p>
+<ul>
+<li>Evaluation will fail for a non-existent path.</li>
+<li>Result will always be an absolute path.</li>
+<li>If path is a symbolic link, it will be resolved.</li>
+</ul>
+<h4 id="directory-separator" class="heading">Directory separator <a class="heading-anchor" href="#directory-separator">#</a></h4>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>z</code></td>
+<td>Ensure trailing directory separator</td>
+</tr>
+<tr class="even">
+<td><code>Z</code></td>
+<td>Remove trailing directory separator</td>
+</tr>
+</tbody>
+</table></div>
+<p>Directory separator filters <code>z</code> and <code>Z</code> can be useful when dealing with root and unnormalized paths.</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th><code>{}b</code></th>
+<th><code>{}/b</code></th>
+<th><code>{z}b</code></th>
+<th><code>{Z}/b</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>/</code></td>
+<td><code>/b</code></td>
+<td><code>//b</code></td>
+<td><code>/b</code></td>
+<td><code>/b</code></td>
+</tr>
+<tr class="even">
+<td><code>a</code></td>
+<td><code>ab</code></td>
+<td><code>a/b</code></td>
+<td><code>a/b</code></td>
+<td><code>a/b</code></td>
+</tr>
+<tr class="odd">
+<td><code>a/</code></td>
+<td><code>a/b</code></td>
+<td><code>a//b</code></td>
+<td><code>a/b</code></td>
+<td><code>a/b</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><a id="section-filters-substr"></a></p>
+<h3 id="substring-filters" class="heading">🆎 Substring filters <a class="heading-anchor" href="#substring-filters">#</a></h3>
+<div class="table-container"><table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 87%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>#A-B</code></td>
+<td>Substring from index <code>A</code> to <code>B</code>.<br><small>Indices <code>A</code>, <code>B</code> start from 1 and are both inclusive.<br>Use <code>-A</code> for backward indexing.</small></td>
+</tr>
+<tr class="even">
+<td><code>#A+L</code></td>
+<td>Substring from index <code>A</code> of length <code>L</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>#A-</code></td>
+<td>Substring from index <code>A</code> to end.</td>
+</tr>
+<tr class="even">
+<td><code>#A</code></td>
+<td>Character at index <code>A</code>.<br><small>Equivalent to <code>#A-A</code>.</small></td>
+</tr>
+</tbody>
+</table></div>
+<p>Examples:</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Pattern</th>
+<th>Output</th>
+<th></th>
+<th>Input</th>
+<th>Pattern</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>abcde</code></td>
+<td><code>{#2-3}</code></td>
+<td><code>bc</code></td>
+<td></td>
+<td><code>abcde</code></td>
+<td><code>{#-2-3}</code></td>
+<td><code>cd</code></td>
+</tr>
+<tr class="even">
+<td><code>abcde</code></td>
+<td><code>{#2+3}</code></td>
+<td><code>bcd</code></td>
+<td></td>
+<td><code>abcde</code></td>
+<td><code>{#-2+3}</code></td>
+<td><code>bcd</code></td>
+</tr>
+<tr class="odd">
+<td><code>abcde</code></td>
+<td><code>{#2-}</code></td>
+<td><code>bcde</code></td>
+<td></td>
+<td><code>abcde</code></td>
+<td><code>{#-2-}</code></td>
+<td><code>abcd</code></td>
+</tr>
+<tr class="even">
+<td><code>abcde</code></td>
+<td><code>{#2}</code></td>
+<td><code>b</code></td>
+<td></td>
+<td><code>abcde</code></td>
+<td><code>{#-2}</code></td>
+<td><code>d</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><a id="section-filters-field"></a></p>
+<h3 id="field-filters" class="heading">📊 Field filters <a class="heading-anchor" href="#field-filters">#</a></h3>
+<div class="table-container"><table>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>&amp;N:S</code></td>
+<td>Split value using separator <code>S</code>, output <code>N</code>-th field.<br><small>Field indices <code>N</code> start from 1.<br>Use <code>-N</code> for backward indexing.<br>Any other character than <code>:</code> can be also used as a delimiter.<br>Use of <code>/</code> as a delimiter has special meaning (see below).</small></td>
+</tr>
+<tr class="even">
+<td><code>&amp;N/S</code></td>
+<td>Split value using regular expression <code>S</code>, output <code>N</code>-th field.</td>
+</tr>
+<tr class="odd">
+<td><code>&amp;N</code></td>
+<td>Split value using default separator, output <code>N</code>-th field.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The default field separator is <em>horizontal tab</em>.</p>
+<ul>
+<li>Use <code>-s, --separator</code> option to change it to a string.</li>
+<li>Use <code>-S, --separator-regex</code> option to change it to a regular expression.</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> a1-b2 <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{&amp;1} {&amp;2}&#39;</span> <span class="at">-s</span><span class="st">&#39;-&#39;</span>       <span class="co"># Will print &quot;a1 b2&quot;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> a1-b2 <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{&amp;1} {&amp;2}&#39;</span> <span class="at">-S</span><span class="st">&#39;[^a-z]+&#39;</span> <span class="co"># Will print &quot;a b&quot;</span></span></code></pre></div>
+<p>Examples:</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Pattern</th>
+<th>Output</th>
+<th></th>
+<th>Input</th>
+<th>Pattern</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>a1\tb2</code></td>
+<td><code>{&amp;1}</code></td>
+<td><code>a1</code></td>
+<td></td>
+<td><code>a1\tb2</code></td>
+<td><code>{&amp;-1}</code></td>
+<td><code>b2</code></td>
+</tr>
+<tr class="even">
+<td><code>a1\tb2</code></td>
+<td><code>{&amp;2}</code></td>
+<td><code>b2</code></td>
+<td></td>
+<td><code>a1\tb2</code></td>
+<td><code>{&amp;-2}</code></td>
+<td><code>a1</code></td>
+</tr>
+<tr class="odd">
+<td><code>a1--b2</code></td>
+<td><code>{&amp;1:-}</code></td>
+<td><code>a1</code></td>
+<td></td>
+<td><code>a1--b2</code></td>
+<td><code>{&amp;-1:-}</code></td>
+<td><code>b2</code></td>
+</tr>
+<tr class="even">
+<td><code>a1--b2</code></td>
+<td><code>{&amp;2:-}</code></td>
+<td><em>(empty)</em></td>
+<td></td>
+<td><code>a1--b2</code></td>
+<td><code>{&amp;-2:-}</code></td>
+<td><em>(empty)</em></td>
+</tr>
+<tr class="odd">
+<td><code>a1--b2</code></td>
+<td><code>{&amp;3:-}</code></td>
+<td><code>b2</code></td>
+<td></td>
+<td><code>a1--b2</code></td>
+<td><code>{&amp;-3:-}</code></td>
+<td><code>a1</code></td>
+</tr>
+<tr class="even">
+<td><code>a1--b2</code></td>
+<td><code>{&amp;1/[^a-z]+}</code></td>
+<td><code>a</code></td>
+<td></td>
+<td><code>a1--b2</code></td>
+<td><code>{&amp;-1/[^a-z]+}</code></td>
+<td><em>(empty)</em></td>
+</tr>
+<tr class="odd">
+<td><code>a1--b2</code></td>
+<td><code>{&amp;2/[^a-z]+}</code></td>
+<td><code>b</code></td>
+<td></td>
+<td><code>a1--b2</code></td>
+<td><code>{&amp;-2/[^a-z]+}</code></td>
+<td><code>b</code></td>
+</tr>
+<tr class="even">
+<td><code>a1--b2</code></td>
+<td><code>{&amp;3/[^a-z]+}</code></td>
+<td><em>(empty)</em></td>
+<td></td>
+<td><code>a1--b2</code></td>
+<td><code>{&amp;-3/[^a-z]+}</code></td>
+<td><code>a</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><a id="section-filters-replace"></a></p>
+<h3 id="replace-filters" class="heading">🔍 Replace filters <a class="heading-anchor" href="#replace-filters">#</a></h3>
+<div class="table-container"><table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 77%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>r:X:Y</code></td>
+<td>Replace first occurrence of <code>X</code> with <code>Y</code>.<br><small>Any other character than <code>:</code> can be also used as a delimiter.</small></td>
+</tr>
+<tr class="even">
+<td><code>r:X</code></td>
+<td>Remove first occurrence of <code>X</code>.<br><small>Equivalent to <code>r:X:</code>.</small></td>
+</tr>
+<tr class="odd">
+<td><code>R:X:Y</code><br><code>R:X</code></td>
+<td>Same as <code>r</code> but replaces/removes all occurrences.</td>
+</tr>
+<tr class="even">
+<td><code>?D</code></td>
+<td>Replace empty value with <code>D</code>.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Examples:</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Pattern</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ab_ab</code></td>
+<td><code>{r:ab:xy}</code></td>
+<td><code>xy_ab</code></td>
+</tr>
+<tr class="even">
+<td><code>ab_ab</code></td>
+<td><code>{R:ab:xy}</code></td>
+<td><code>xy_xy</code></td>
+</tr>
+<tr class="odd">
+<td><code>ab_ab</code></td>
+<td><code>{r:ab}</code></td>
+<td><code>_ab</code></td>
+</tr>
+<tr class="even">
+<td><code>ab_ab</code></td>
+<td><code>{R:ab}</code></td>
+<td><code>_</code></td>
+</tr>
+<tr class="odd">
+<td><code>abc</code></td>
+<td><code>{?def}</code></td>
+<td><code>abc</code></td>
+</tr>
+<tr class="even">
+<td><em>(empty)</em></td>
+<td><code>{?def}</code></td>
+<td><code>def</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><a id="section-filters-regex"></a></p>
+<h3 id="regex-filters" class="heading">⭐️ Regex filters <a class="heading-anchor" href="#regex-filters">#</a></h3>
+<div class="table-container"><table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>=E</code></td>
+<td>Match of a regular expression <code>E</code>.</td>
+</tr>
+<tr class="even">
+<td><code>s:X:Y</code></td>
+<td>Replace first match of a regular expression <code>X</code> with <code>Y</code>.<br><small><code>Y</code> can reference capture groups from <code>X</code> using <code>$0</code>, <code>$1</code>, <code>$2</code>, …<br>Any other character than <code>:</code> can be also used as a delimiter.</small></td>
+</tr>
+<tr class="odd">
+<td><code>s:X</code></td>
+<td>Remove first match of a regular expression <code>X</code>.<br><small>Equivalent to <code>s:X:</code>.</small></td>
+</tr>
+<tr class="even">
+<td><code>S:X:Y</code><br><code>S:X</code></td>
+<td>Same as <code>s</code> but replaces/removes all matches.</td>
+</tr>
+<tr class="odd">
+<td><code>@:X1:Y1:...:Xn:Yn:D</code></td>
+<td>Regular expression switch.<br><small>Output <code>Yi</code> for first <code>Xi</code> that matches input.<br>Output <code>D</code> when there is no match.<br><code>Yi</code> can reference capture groups from <code>Xi</code> using <code>$0</code>, <code>$1</code>, <code>$2</code>, …<br>Any other character than <code>:</code> can be also used as a delimiter.</small></td>
+</tr>
+<tr class="even">
+<td><code>$0</code>, <code>$1</code>, <code>$2</code>, …</td>
+<td>Capture group of a global regular expression.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Examples:</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Pattern</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>12_34</code></td>
+<td><code>{=\d+}</code></td>
+<td><code>12</code></td>
+</tr>
+<tr class="even">
+<td><code>12_34</code></td>
+<td><code>{s:\d+:x}</code></td>
+<td><code>x_34</code></td>
+</tr>
+<tr class="odd">
+<td><code>12_34</code></td>
+<td><code>{S:\d+:x}</code></td>
+<td><code>x_x</code></td>
+</tr>
+<tr class="even">
+<td><code>12_34</code></td>
+<td><code>{s:(\d)(\d):$2$1}</code></td>
+<td><code>21_34</code></td>
+</tr>
+<tr class="odd">
+<td><code>12_34</code></td>
+<td><code>{S:(\d)(\d):$2$1}</code></td>
+<td><code>21_43</code></td>
+</tr>
+<tr class="even">
+<td><em>(any)</em></td>
+<td><code>{@:def}</code></td>
+<td><code>def</code></td>
+</tr>
+<tr class="odd">
+<td><code>ab</code></td>
+<td><code>{@:^[a-z]+$:lower:^[A-Z]+$:upper:mixed}</code></td>
+<td><code>lower</code></td>
+</tr>
+<tr class="even">
+<td><code>AB</code></td>
+<td><code>{@:^[a-z]+$:lower:^[A-Z]+$:upper:mixed}</code></td>
+<td><code>upper</code></td>
+</tr>
+<tr class="odd">
+<td><code>Ab</code></td>
+<td><code>{@:^[a-z]+$:lower:^[A-Z]+$:upper:mixed}</code></td>
+<td><code>mixed</code></td>
+</tr>
+<tr class="even">
+<td><code>a=b</code></td>
+<td><code>{@/(.+)=(.*)/key: $1, value: $2/invalid}</code></td>
+<td><code>key: a, value: b</code></td>
+</tr>
+<tr class="odd">
+<td><code>ab</code></td>
+<td><code>{@/(.+)=(.*)/key: $1, value: $2/invalid}</code></td>
+<td><code>invalid</code></td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>Use <code>-e, --regex</code> or <code>-E, --regex-filename</code> option to define a global regular expression.</li>
+<li>Option <code>-e, --regex</code> matches regex against each input value.</li>
+<li>Option <code>-E, --regex-filename</code> matches regex against <em>filename component</em> of each input value.</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;a/b.c&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-e</span> <span class="st">&#39;([a-z])&#39;</span> <span class="st">&#39;{$1}&#39;</span> <span class="co"># Will print &#39;a&#39;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;a/b.c&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-E</span> <span class="st">&#39;([a-z])&#39;</span> <span class="st">&#39;{$1}&#39;</span> <span class="co"># Will print &#39;b&#39;</span></span></code></pre></div>
+<p><a id="section-filters-format"></a></p>
+<h3 id="format-filters" class="heading">🎨 Format filters <a class="heading-anchor" href="#format-filters">#</a></h3>
+<div class="table-container"><table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>t</code></td>
+<td>Trim white-spaces from both sides.</td>
+</tr>
+<tr class="even">
+<td><code>v</code></td>
+<td>Convert to lowercase.</td>
+</tr>
+<tr class="odd">
+<td><code>^</code></td>
+<td>Convert to uppercase.</td>
+</tr>
+<tr class="even">
+<td><code>i</code></td>
+<td>Convert non-ASCII characters to ASCII.</td>
+</tr>
+<tr class="odd">
+<td><code>I</code></td>
+<td>Remove non-ASCII characters.</td>
+</tr>
+<tr class="even">
+<td><code>&lt;&lt;M</code></td>
+<td>Left pad with mask <code>M</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>&lt;N:M</code></td>
+<td>Left pad with <code>N</code> times repeated mask <code>M</code>.<br><small>Any other character than <code>:</code> can be also used as a delimiter.</small></td>
+</tr>
+<tr class="even">
+<td><code>&gt;&gt;M</code></td>
+<td>Right pad with mask <code>M</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>&gt;N:M</code></td>
+<td>Right pad with <code>N</code> times repeated mask <code>M</code>.<br><small>Any other character than <code>:</code> can be also used as a delimiter.</small></td>
+</tr>
+</tbody>
+</table></div>
+<p>Examples:</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Pattern</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>..a..b..</code></td>
+<td><code>{t}</code></td>
+<td><code>a..b</code> <em>(dots are white-spaces)</em></td>
+</tr>
+<tr class="even">
+<td><code>aBčĎ</code></td>
+<td><code>{v}</code></td>
+<td><code>abčď</code></td>
+</tr>
+<tr class="odd">
+<td><code>aBčĎ</code></td>
+<td><code>{^}</code></td>
+<td><code>ABČĎ</code></td>
+</tr>
+<tr class="even">
+<td><code>aBčĎ</code></td>
+<td><code>{i}</code></td>
+<td><code>aBcD</code></td>
+</tr>
+<tr class="odd">
+<td><code>aBčĎ</code></td>
+<td><code>{I}</code></td>
+<td><code>aB</code></td>
+</tr>
+<tr class="even">
+<td><code>abc</code></td>
+<td><code>{&lt;&lt;123456}</code></td>
+<td><code>123abc</code></td>
+</tr>
+<tr class="odd">
+<td><code>abc</code></td>
+<td><code>{&gt;&gt;123456}</code></td>
+<td><code>abc456</code></td>
+</tr>
+<tr class="even">
+<td><code>abc</code></td>
+<td><code>{&lt;3:XY}</code></td>
+<td><code>XYXabc</code></td>
+</tr>
+<tr class="odd">
+<td><code>abc</code></td>
+<td><code>{&gt;3:XY}</code></td>
+<td><code>abcYXY</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><a id="section-filters-generate"></a></p>
+<h3 id="generators" class="heading">🏭 Generators <a class="heading-anchor" href="#generators">#</a></h3>
+<p>Unlike other filters, generator output is not produced from its input. However, it is still possible (although meaningless) to pipe input into a generator.</p>
+<div class="table-container"><table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>*N:V</code></td>
+<td>Repeat <code>N</code> times <code>V</code>.<br><small>Any other character than <code>:</code> can be also used as a delimiter.</small></td>
+</tr>
+<tr class="even">
+<td><code>c</code></td>
+<td>Local counter</td>
+</tr>
+<tr class="odd">
+<td><code>C</code></td>
+<td>Global counter</td>
+</tr>
+<tr class="even">
+<td><code>uA-B</code></td>
+<td>Random 64-bit number (<code>A</code> ≤ <code>u</code> ≤ <code>B</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>uA-</code></td>
+<td>Random 64-bit number (<code>A</code> ≤ <code>u</code>)</td>
+</tr>
+<tr class="even">
+<td><code>u</code></td>
+<td>Random 64-bit number</td>
+</tr>
+<tr class="odd">
+<td><code>U</code></td>
+<td>Random UUID</td>
+</tr>
+</tbody>
+</table></div>
+<p>Examples:</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Pattern</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>{*3:ab}</code></td>
+<td><code>ababab</code></td>
+</tr>
+<tr class="even">
+<td><code>{c}</code></td>
+<td><em>(see below)</em></td>
+</tr>
+<tr class="odd">
+<td><code>{C}</code></td>
+<td><em>(see below)</em></td>
+</tr>
+<tr class="even">
+<td><code>{u0-99}</code></td>
+<td><em>(random number between 0 and 99)</em></td>
+</tr>
+<tr class="odd">
+<td><code>{U}</code></td>
+<td><code>5eefc76d-0ca1-4631-8fd0-62eeb401c432</code> <em>(random)</em></td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>Global counter <code>C</code> is incremented for every input value.</li>
+<li>Local counter <code>c</code> is incremented per parent directory (assuming input value is a FS path).</li>
+<li>Both counters start at 1 and are incremented by 1.</li>
+</ul>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th>Global counter</th>
+<th>Local counter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>A/1</code></td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td><code>A/2</code></td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td><code>B/1</code></td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td><code>B/2</code></td>
+<td>4</td>
+<td>2</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>Use <code>-c, --local-counter</code> option to change local counter configuration.</li>
+<li>Use <code>-C, --global-counter</code> option to change global counter configuration.</li>
+</ul>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="at">-c0</span>   <span class="st">&#39;{c}&#39;</span> <span class="co"># Start from 0, increment by 1</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="at">-c2:3</span> <span class="st">&#39;{c}&#39;</span> <span class="co"># Start from 2, increment by 3</span></span></code></pre></div>
+<p><a id="section-input"></a></p>
+<h2 id="input" class="heading">⌨️ Input <a class="heading-anchor" href="#input">#</a></h2>
+<p>By default, input values are read as lines from standard input. Each line is expected to be terminated either by <code>LF</code> or <code>CR+LF</code> characters. The last line (before <code>EOF</code>) does not need to have a terminator.</p>
+<ul>
+<li>Use <code>-t, --read</code> option to read values terminated by a specific character.</li>
+<li>Use <code>-z, --read-nul</code> flag to read values terminated by <code>NUL</code> character.</li>
+<li>Use <code>-r, --read-raw</code> flag to read whole input into memory as a single value.</li>
+<li>Use <code>-l, --read-end</code> flag to read the last value (before <code>EOF</code>) only if it is properly terminated.</li>
+</ul>
+<p>The following table shows how an input would be parsed for valid combinations of flags/options:</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Input</th>
+<th><em>(no flag)</em></th>
+<th><code>-l</code></th>
+<th><code>-z</code></th>
+<th><code>-lz</code></th>
+<th><code>-t:</code></th>
+<th><code>-lt:</code></th>
+<th><code>-r</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>a\nb</code></td>
+<td><code>a</code>, <code>b</code></td>
+<td><code>a</code></td>
+<td><code>a\nb</code></td>
+<td><em>(none)</em></td>
+<td><code>a\nb</code></td>
+<td><em>(none)</em></td>
+<td><code>a\nb</code></td>
+</tr>
+<tr class="even">
+<td><code>a\nb\n</code></td>
+<td><code>a</code>, <code>b</code></td>
+<td><code>a</code>, <code>b</code></td>
+<td><code>a\nb\n</code></td>
+<td><em>(none)</em></td>
+<td><code>a\nb\n</code></td>
+<td><em>(none)</em></td>
+<td><code>a\nb\n</code></td>
+</tr>
+<tr class="odd">
+<td><code>a\0b</code></td>
+<td><code>a\0b</code></td>
+<td><em>(none)</em></td>
+<td><code>a</code>, <code>b</code></td>
+<td><code>a</code></td>
+<td><code>a\0b</code></td>
+<td><em>(none)</em></td>
+<td><code>a\0b</code></td>
+</tr>
+<tr class="even">
+<td><code>a\0b\0</code></td>
+<td><code>a\0b\0</code></td>
+<td><em>(none)</em></td>
+<td><code>a</code>, <code>b</code></td>
+<td><code>a</code>, <code>b</code></td>
+<td><code>a\0b\0</code></td>
+<td><em>(none)</em></td>
+<td><code>a\0b\0</code></td>
+</tr>
+<tr class="odd">
+<td><code>a:b</code></td>
+<td><code>a:b</code></td>
+<td><em>(none)</em></td>
+<td><code>a:b</code></td>
+<td><em>(none)</em></td>
+<td><code>a</code>, <code>b</code></td>
+<td><code>a</code></td>
+<td><code>a:b</code></td>
+</tr>
+<tr class="even">
+<td><code>a:b:</code></td>
+<td><code>a:b:</code></td>
+<td><em>(none)</em></td>
+<td><code>a:b:</code></td>
+<td><em>(none)</em></td>
+<td><code>a</code>, <code>b</code></td>
+<td><code>a</code>, <code>b</code></td>
+<td><code>a:b:</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Input values can be also passed as additional arguments. In such case, standard input will not be read.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{}&#39;</span> image.jpg <span class="pp">*</span>.txt <span class="co"># Wildcard expansion is done by shell</span></span></code></pre></div>
+<p>Use flag <code>-I, --no-stdin</code> to enforce this behaviour even if there are no additional arguments.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> a <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{}&#39;</span>       <span class="co"># Will print &quot;a&quot;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> a <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{}&#39;</span> b     <span class="co"># Will print &quot;b&quot;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> a <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-I</span> <span class="st">&#39;{}&#39;</span>    <span class="co"># Will print nothing</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> a <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-I</span> <span class="st">&#39;{}&#39;</span> b  <span class="co"># Will print &quot;b&quot;</span></span></code></pre></div>
+<p><a id="section-output"></a></p>
+<h2 id="output" class="heading">💬 Output <a class="heading-anchor" href="#output">#</a></h2>
+<p>By default, results are printed as lines to standard output. <code>LF</code> character is used as a line terminator.</p>
+<ul>
+<li>Use <code>-T, --print</code> option to print results terminated by a specific string.</li>
+<li>Use <code>-Z, --print-nul</code> flag to print results terminated by <code>NUL</code> character.</li>
+<li>Use <code>-R, --print-raw</code> flag to print results without a terminator.</li>
+<li>Use <code>-L, --no-print-end</code> flag to disable printing terminator for the last result.</li>
+</ul>
+<p>The following table shows how values would be printed for valid combinations of flags/options:</p>
+<div class="table-container"><table>
+<thead>
+<tr class="header">
+<th>Values</th>
+<th>Flags</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>a</code>, <code>b</code>, <code>c</code></td>
+<td><em>(none)</em></td>
+<td><code>a\nb\nc\n</code></td>
+</tr>
+<tr class="even">
+<td><code>a</code>, <code>b</code>, <code>c</code></td>
+<td><code>-L</code></td>
+<td><code>a\nb\nc</code></td>
+</tr>
+<tr class="odd">
+<td><code>a</code>, <code>b</code>, <code>c</code></td>
+<td><code>-Z</code></td>
+<td><code>a\0b\0c\0</code></td>
+</tr>
+<tr class="even">
+<td><code>a</code>, <code>b</code>, <code>c</code></td>
+<td><code>-LZ</code></td>
+<td><code>a\0b\0c</code></td>
+</tr>
+<tr class="odd">
+<td><code>a</code>, <code>b</code>, <code>c</code></td>
+<td><code>-T:</code></td>
+<td><code>a:b:c:</code></td>
+</tr>
+<tr class="even">
+<td><code>a</code>, <code>b</code>, <code>c</code></td>
+<td><code>-LT:</code></td>
+<td><code>a:b:c</code></td>
+</tr>
+<tr class="odd">
+<td><code>a</code>, <code>b</code>, <code>c</code></td>
+<td><code>-R</code></td>
+<td><code>abc</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Apart from this (standard) mode, there are also two other output modes.</p>
+<h3 id="diff-mode" class="heading">🤖 Diff mode <a class="heading-anchor" href="#diff-mode">#</a></h3>
+<ul>
+<li>Enabled using <code>-d, --diff</code> flag.</li>
+<li>Respects <code>--print*</code> flags/options.</li>
+<li>Ignores <code>--no-print-end</code> flag.</li>
+<li>Prints machine-readable transformations as results:</li>
+</ul>
+<pre class="text"><code>&lt;input_value_1
+&gt;output_value_1
+&lt;input_value_2
+&gt;output_value_2
+...
+&lt;input_value_N
+&gt;output_value_N</code></pre>
+<p>Such output can be processed by accompanying <code>mvb</code> and <code>cpb</code> utilities to perform bulk move/copy.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&#39;{B}.jpg&#39;</span> <span class="kw">|</span> <span class="ex">mvb</span> <span class="co"># Rename all *.jpeg files to *.jpg</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.txt&#39;</span>  <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&#39;{}.bak&#39;</span>  <span class="kw">|</span> <span class="ex">cpb</span> <span class="co"># Make backup copy of each *.txt file</span></span></code></pre></div>
+<h3 id="pretty-mode" class="heading">🌹 Pretty mode <a class="heading-anchor" href="#pretty-mode">#</a></h3>
+<ul>
+<li>Enabled using <code>-p, --pretty</code> flag.</li>
+<li>Ignores <code>--print*</code> flags/options.</li>
+<li>Ignores <code>--no-print-end</code> flag.</li>
+<li>Prints human-readable transformations as results:</li>
+</ul>
+<pre class="text"><code>input_value_1 -&gt; output_value_1
+input_value_2 -&gt; output_value_2
+...
+input_value_N -&gt; output_value_N</code></pre>
+<p><a id="section-examples"></a></p>
+<h2 id="examples" class="heading">🗃 Examples <a class="heading-anchor" href="#examples">#</a></h2>
+<blockquote>
+<p>ℹ️ Use <code>rew --explain &lt;pattern&gt;</code> to print detailed explanation what a certain pattern does.</p>
+</blockquote>
+<h3 id="path-processing" class="heading">Path processing <a class="heading-anchor" href="#path-processing">#</a></h3>
+<p>Print contents of the current working directory as absolute paths.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{a}&#39;</span> <span class="pp">*</span></span></code></pre></div>
+<p>The previous <code>*</code> shell expansion would not work for an empty directory. As a workaround, we can read paths from standard input.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{a}&#39;</span></span></code></pre></div>
+<h3 id="batch-rename" class="heading">Batch rename <a class="heading-anchor" href="#batch-rename">#</a></h3>
+<p>Rename all <code>*.jpeg</code> files to <code>*.jpg</code>.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&#39;{B}.jpg&#39;</span> <span class="kw">|</span> <span class="ex">mvb</span> <span class="at">-v</span></span></code></pre></div>
+<p>The same thing but we generate and execute shell code.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-q</span> <span class="st">&#39;mv -v {} {B}.jpg&#39;</span> <span class="kw">|</span> <span class="fu">sh</span></span></code></pre></div>
+<p>Normalize base names of files to <code>file_001</code>, <code>file_002</code>, …</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-type</span> f <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&#39;{d}/file_{C|&lt;3:0}{E}&#39;</span> <span class="kw">|</span> <span class="ex">mvb</span> <span class="at">-v</span></span></code></pre></div>
+<p>Flatten directory structure <code>./dir/subdir/</code> to <code>./dir_subdir/</code>.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-mindepth</span> 2 <span class="at">-maxdepth</span> 2 <span class="at">-type</span> d <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&#39;{D}_{F}&#39;</span> <span class="kw">|</span> <span class="ex">mvb</span> <span class="at">-v</span></span></code></pre></div>
+<h3 id="batch-copy" class="heading">Batch copy <a class="heading-anchor" href="#batch-copy">#</a></h3>
+<p>Make backup copy of each <code>*.txt</code> file with <code>.txt.bak</code> extension in the same directory.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.txt&#39;</span>  <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&#39;{}.bak&#39;</span>  <span class="kw">|</span> <span class="ex">cpb</span> <span class="at">-v</span></span></code></pre></div>
+<p>Copy <code>*.txt</code> files to the <code>~/Backup</code> directory. Preserve directory structure.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.txt&#39;</span>  <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&quot;</span><span class="va">$HOME</span><span class="st">/Backup/{p}&quot;</span>  <span class="kw">|</span> <span class="ex">cpb</span> <span class="at">-v</span></span></code></pre></div>
+<p>The same thing but with collapsed output directory structure.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.txt&#39;</span>  <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&quot;</span><span class="va">$HOME</span><span class="st">/Backup/{f}&quot;</span>  <span class="kw">|</span> <span class="ex">cpb</span> <span class="at">-v</span></span></code></pre></div>
+<p>The same thing but we also append randomly generated base name suffix to avoid collisions.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.txt&#39;</span>  <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&quot;</span><span class="va">$HOME</span><span class="st">/Backup/{b}_{U}.{e}&quot;</span>  <span class="kw">|</span> <span class="ex">cpb</span> <span class="at">-v</span></span></code></pre></div>
+<h3 id="text-processing" class="heading">Text processing <a class="heading-anchor" href="#text-processing">#</a></h3>
+<p>Normalize line endings in a file to <code>LF</code></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="op">&lt;</span>input.txt <span class="op">&gt;</span>output.txt <span class="co"># LF is the default output terminator</span></span></code></pre></div>
+<p>Normalize line endings in a file to <code>CR+LF</code>.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="at">-T</span><span class="st">$&#39;</span><span class="dt">\r\n</span><span class="st">&#39;</span> <span class="op">&lt;</span>input.txt <span class="op">&gt;</span>output.txt</span></code></pre></div>
+<p>Replace tabs with 4 spaces.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{R:%t:    }&#39;</span> <span class="op">&lt;</span>input.txt <span class="op">&gt;</span>output.txt</span></code></pre></div>
+<p>That would also normalize line endings. To prevent such behaviour, we can process the text as a whole.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="at">-rR</span> <span class="st">&#39;{R:%t:    }&#39;</span> <span class="op">&lt;</span>input.txt <span class="op">&gt;</span>output.txt</span></code></pre></div>
+<p>Print the first word from each line in lowercase and with removed diacritics (accents).</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{=\S+|v|i}&#39;</span> <span class="op">&lt;</span>input.txt</span></code></pre></div>
+<h3 id="csv-editing" class="heading">CSV editing <a class="heading-anchor" href="#csv-editing">#</a></h3>
+<p>Swap the first and second column in a CSV file.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="at">-e</span><span class="st">&#39;([^,]*),([^,]*),(.*)&#39;</span> <span class="st">&#39;{$2},{$1},{$3}&#39;</span> <span class="op">&lt;</span>input.csv <span class="op">&gt;</span>output.csv</span></code></pre></div>
+<p>The same thing but we use regex replace filter.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{s/([^,]*),([^,]*),(.*)/$2,$1,$3}&#39;</span> <span class="op">&lt;</span>input.csv <span class="op">&gt;</span>output.csv</span></code></pre></div>
+<p><a id="section-compare"></a></p>
+<h2 id="comparison" class="heading">🔬 Comparison <a class="heading-anchor" href="#comparison">#</a></h2>
+<p>Let us compare <code>rew</code> to a variety of existing tools.</p>
+<h3 id="rename" class="heading">rename <a class="heading-anchor" href="#rename">#</a></h3>
+<p>Both <code>rename</code> abd <code>rew</code> can be used to rename multiple files.</p>
+<p><code>rename</code> requires all inputs to be passed as arguments. This means you have to use <code>xargs</code> when processing output of <code>find</code>. <code>rew</code> can read values directly from standard input.</p>
+<p>Additionally, <code>rew</code> is only a text-processing tool and cannot rename files by itself. You have to use accompanying <code>mvb</code> / <code>cpb</code> utilities, or you can generate and execute shell code.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="fu">xargs</span> rename .jpeg .jpg     <span class="co"># Rename *.jpeg files to *.jpg</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-d</span> <span class="st">&#39;{B}.jpg&#39;</span> <span class="kw">|</span> <span class="ex">mvb</span>      <span class="co"># The same thing using rew + mvb</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="at">-name</span> <span class="st">&#39;*.jpeg&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-q</span> <span class="st">&#39;mv {} {B}.jpg&#39;</span> <span class="kw">|</span> <span class="fu">sh</span> <span class="co"># The same thing using rew + mv + sh</span></span></code></pre></div>
+<h3 id="dirname" class="heading">dirname <a class="heading-anchor" href="#dirname">#</a></h3>
+<p>Both <code>dirname</code> and <code>rew</code> can remove last component from a path:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dirname</span> <span class="st">&#39;dir/file.txt&#39;</span>   <span class="co"># Will print &quot;dir&quot;</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{d}&#39;</span> <span class="st">&#39;dir/file.txt&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h3 id="basename" class="heading">basename <a class="heading-anchor" href="#basename">#</a></h3>
+<p>Both <code>basename</code> and <code>rew</code> can remove leading directories from a path:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">basename</span> <span class="st">&#39;dir/file.txt&#39;</span>  <span class="co"># Will print &quot;file.txt&quot;</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{f}&#39;</span> <span class="st">&#39;dir/file.txt&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p><code>basename</code> can additionally remove filename extension, but we have to manually provide it as a suffix. <code>rew</code> is able to remove filename extension automatically:</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">basename</span> <span class="st">&#39;dir/file.txt&#39;</span> <span class="st">&#39;.txt&#39;</span> <span class="co"># Will print &quot;file&quot;</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{b}&#39;</span> <span class="st">&#39;dir/file.txt&#39;</span>       <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>In case the suffix does not represent an extension, <code>rew</code> requires an additional filter to remove it:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">basename</span> <span class="st">&#39;dir/file_txt&#39;</span> <span class="st">&#39;_txt&#39;</span>   <span class="co"># Will print &quot;file&quot;</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{f|s:_txt$}&#39;</span> <span class="st">&#39;dir/file_txt&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h3 id="realpath" class="heading">realpath <a class="heading-anchor" href="#realpath">#</a></h3>
+<p>Both <code>realpath</code> and <code>rew</code> can resolve canonical form of a path:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="ex">realpath</span> <span class="at">-e</span> <span class="st">&#39;/usr/../home&#39;</span> <span class="co"># Will print &quot;/home&quot;</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{P}&#39;</span> <span class="st">&#39;/usr/../home&#39;</span>   <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>Or they can both compute a relative path:</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">realpath</span> <span class="at">--relative-to</span><span class="op">=</span><span class="st">&#39;/home&#39;</span> <span class="st">&#39;/usr&#39;</span> <span class="co"># Will print &quot;../usr&quot;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="at">-w</span> <span class="st">&#39;/home&#39;</span> <span class="st">&#39;{A}&#39;</span> <span class="st">&#39;/usr&#39;</span>           <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h3 id="pwd" class="heading">pwd <a class="heading-anchor" href="#pwd">#</a></h3>
+<p>Both <code>pwd</code> and <code>rew</code> can print the current working directory:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span>                     <span class="co"># pwd is obviously easier to use</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rew</span> <span class="st">&#39;{w}&#39;</span> <span class="st">&#39;&lt;any value&gt;&#39;</span> <span class="co"># rew requires an additional input</span></span></code></pre></div>
+<h3 id="sed" class="heading">sed <a class="heading-anchor" href="#sed">#</a></h3>
+<p>Both <code>sed</code> and <code>rew</code> can replace text matching a regular expression:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;12 ab 34&#39;</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="at">-E</span> <span class="st">&#39;s/([0-9]+)/_\1_/g&#39;</span> <span class="co"># Will print &quot;_12_ ab _34_&quot;</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;12 ab 34&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{S:(\d+):_$1_}&#39;</span>       <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h3 id="cut" class="heading">cut <a class="heading-anchor" href="#cut">#</a></h3>
+<p>Both <code>cut</code> and <code>rew</code> can print substring:</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;abcde&#39;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-c</span> <span class="st">&#39;2-4&#39;</span> <span class="co"># Will print &quot;bcd&quot;</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;abcde&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{#2-4}&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>Or they can both print fields:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab,cd,ef&#39;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="st">&#39;,&#39;</span> <span class="at">-f2</span>    <span class="co"># Will print &quot;cd&quot;</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab,cd,ef&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-s</span><span class="st">&#39;,&#39;</span> <span class="st">&#39;{&amp;2}&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h3 id="awk" class="heading">awk <a class="heading-anchor" href="#awk">#</a></h3>
+<p><code>awk</code> is obviously a more powerful tool than <code>rew</code>. However, there are some use cases where <code>rew</code> can replace <code>awk</code> using more compact pattern syntax.</p>
+<p>Printing substring:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;abcde&#39;</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;{print substr($0,2,3)}&#39;</span> <span class="co"># Will print &quot;bcd&quot;</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;abcde&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{#2+3}&#39;</span>                 <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>Printing field:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab,cd,ef&#39;</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F</span><span class="st">&#39;,&#39;</span> <span class="st">&#39;{print $2}&#39;</span> <span class="co"># Will print &quot;cd&quot;</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab,cd,ef&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-s</span><span class="st">&#39;,&#39;</span> <span class="st">&#39;{&amp;2}&#39;</span>       <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>Printing first match of a regular expression:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab 12 cd&#39;</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;match($0,/[0-9]+/) {print substr($0,RSTART,RLENGTH)}&#39;</span> <span class="co"># Will print &quot;12&quot;</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab 12 cd&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{=\d+}&#39;</span>                                               <span class="co"># The same thing using rew</span></span></code></pre></div>
+<h3 id="grep" class="heading">grep <a class="heading-anchor" href="#grep">#</a></h3>
+<p>Both <code>grep</code> and <code>rew</code> can print matches of a regular expression:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab 12 cd&#39;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-Po</span> <span class="st">&#39;\d+&#39;</span> <span class="co"># Will print &quot;12&quot;</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;ab 12 cd&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="st">&#39;{=\d+}&#39;</span>   <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p>If an input line contains multiple matches, <code>grep</code> will print each on a separate line. <code>rew</code> will, however, print only the first match from each line. This is because <code>rew</code> transforms lines in 1-to-1 correspondence.</p>
+<p>In this particular case, we can workaround it, using raw output mode <code>-R</code> and regex replace filters <code>sS</code>.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;12 ab 34&#39;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-Po</span> <span class="st">&#39;\d+&#39;</span>                        <span class="co"># Will print &quot;12&quot; and &quot;34&quot;</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;12 ab 34&#39;</span> <span class="kw">|</span> <span class="ex">rew</span> <span class="at">-R</span> <span class="st">&#39;{s:^\D+$|S:\D*(\d+)\D*:$1%n}&#39;</span> <span class="co"># The same thing using rew</span></span></code></pre></div>
+<p><a id="section-changelog"></a></p>
+<h2 id="changelog" class="heading">📈 Changelog <a class="heading-anchor" href="#changelog">#</a></h2>
+<p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<h3 id="section" class="heading"><a href="https://github.com/jpikl/rew/compare/v0.2.0...v0.3.0">0.3.0</a> - 2021-03-29 <a class="heading-anchor" href="#section">#</a></h3>
+<h4 id="added" class="heading">Added <a class="heading-anchor" href="#added">#</a></h4>
+<ul>
+<li><code>&amp;</code> filter which splits value using a separator and outputs N-th column.</li>
+<li><code>-q, --quote</code> flag to automatically wrap output of every pattern expression in quotes.</li>
+<li><code>-l, --read-end</code> flag to require the last input value to be properly terminated.</li>
+<li><code>-I, --no-stdin</code> flag to disable reading values from standard input.</li>
+</ul>
+<h4 id="changed" class="heading">Changed <a class="heading-anchor" href="#changed">#</a></h4>
+<ul>
+<li><code>%</code> is the default pattern escape character instead of <code>#</code>.</li>
+<li><code>n</code> filter (substring) was renamed to <code>#</code>.</li>
+<li><code>N</code> filter (substring with backward indexing) was replaced by use of <code>#</code> with negative indexing (e.g., <code>#-2</code>).</li>
+<li>Parsing of <code>A+L</code> range can no longer fail with overflow error. Such range would be now resolved as <code>A-</code> (from <code>A</code> to end).</li>
+<li>Capture groups of a global regex need to be prefixed with <code>$</code> (e.g., <code>{$1}</code> instead of <code>{1}</code>).</li>
+<li>More lenient number parsing that ignore multiple leading zeros (e.g., <code>001</code> is interpreted as <code>1</code>).</li>
+<li>Output of <code>--explain</code> flag and error output have escaped non-printable and other special characters (newline, tab, etc.).</li>
+<li>Output of <code>--help-pattern</code> includes list of escape sequences.</li>
+<li>Output of <code>--help-filters</code> flag has more readable layout.</li>
+<li><code>-T, --no-trailing-delimiter</code> flag was renamed to <code>-L, --no-print-end</code>.</li>
+<li><code>-s, --fail-at-end</code> flag was renamed to <code>-F, --fail-at-end</code>.</li>
+<li><code>-b, -diff</code> flag was renamed to <code>-d, --diff</code> flag.</li>
+</ul>
+<h4 id="fixed" class="heading">Fixed <a class="heading-anchor" href="#fixed">#</a></h4>
+<ul>
+<li><code>A+L</code> range is correctly evaluated as “from <code>A</code> to <code>A+L</code>” (not <code>A+L+1</code> as previously).</li>
+<li><code>-h, --help</code> flag displays correct position of <code>--</code> argument in usage.</li>
+</ul>
+<h3 id="section-1" class="heading"><a href="https://github.com/jpikl/rew/compare/v0.1.0...v0.2.0">0.2.0</a> - 2021-02-14 <a class="heading-anchor" href="#section-1">#</a></h3>
+<h4 id="added-1" class="heading">Added <a class="heading-anchor" href="#added-1">#</a></h4>
+<ul>
+<li><code>@</code> filter (regular expression switch).</li>
+<li>Alternative way to write range of substring filters as <code>start+length</code>.</li>
+</ul>
+<h4 id="changed-1" class="heading">Changed <a class="heading-anchor" href="#changed-1">#</a></h4>
+<ul>
+<li><code>l</code> filter (to lowercase) was renamed to <code>v</code>.</li>
+<li><code>L</code> filter (to uppercase) was renamed to <code>^</code>.</li>
+<li><code>0</code> is now a valid filter a no longer considered error.</li>
+<li>Simplified error message for an invalid range.</li>
+<li>Simplified output of <code>--help-pattern</code> and <code>--help-filters</code> flags.</li>
+<li>Output of <code>-h, --help</code> flag is organized into sections.</li>
+<li>Output of <code>-h, --help</code> flag uses more colors in descriptions.</li>
+<li>Regular expression <code>-e. --regex</code> / <code>-E. --regex-filename</code> is now called <em>global</em> instead of <em>external</em>.</li>
+</ul>
+<h4 id="fixed-1" class="heading">Fixed <a class="heading-anchor" href="#fixed-1">#</a></h4>
+<ul>
+<li><code>--help-filters</code> flag displays correct name of <code>i</code> / <code>I</code> filters.</li>
+</ul>
+<h3 id="section-2" class="heading"><a href="https://github.com/jpikl/rew/releases/tag/v0.1.0">0.1.0</a> - 2020-12-13 <a class="heading-anchor" href="#section-2">#</a></h3>
+<p>Initial release.</p>
+<p><a id="section-license"></a></p>
+<h2 id="mit-license" class="heading">MIT License <a class="heading-anchor" href="#mit-license">#</a></h2>
+<p>Copyright (c) 2020 Jan Pikl</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+<!-- pandoc output end -->
+</main>
+</body>
+</html>
