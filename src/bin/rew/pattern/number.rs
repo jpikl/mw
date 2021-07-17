@@ -60,7 +60,6 @@ mod tests {
         use crate::pattern::parse::{Error, ErrorKind};
         use crate::pattern::reader::Reader;
 
-        #[test_case("-",   0..1, ErrorKind::RangeInvalid("-".into())                  ; "invalid")]
         #[test_case("2-1", 0..3, ErrorKind::RangeStartOverEnd("2".into(), "1".into()) ; "start above end")]
         #[test_case("0+1", 1..2, ErrorKind::ExpectedRangeDelimiter(Some('+'.into()))  ; "start with length")]
         #[test_case("1",   1..1, ErrorKind::ExpectedRangeDelimiter(None)              ; "no delimiter")]
@@ -73,6 +72,7 @@ mod tests {
         }
 
         #[test_case("",    0, None    ; "empty")]
+        #[test_case("-",   0, None    ; "empty ignored chars")]
         #[test_case("0-",  0, None    ; "start no end")]
         #[test_case("0-1", 0, Some(2) ; "start below end")]
         #[test_case("1-1", 1, Some(2) ; "start equals end")]

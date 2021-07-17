@@ -82,8 +82,8 @@ mod tests {
 
         #[test_case("",     0..0, ErrorKind::ExpectedRange                             ; "empty")]
         #[test_case("-",    0..1, ErrorKind::RangeInvalid("-".into())                  ; "invalid")]
-        #[test_case("0-",   0..1, ErrorKind::IndexZero                                 ; "zero start no end")]
-        #[test_case("1-0",  2..3, ErrorKind::IndexZero                                 ; "start above zero end")]
+        #[test_case("0-",   0..1, ErrorKind::IndexZero                                 ; "zero start")]
+        #[test_case("1-0",  2..3, ErrorKind::IndexZero                                 ; "zero end")]
         #[test_case("2-1",  0..3, ErrorKind::RangeStartOverEnd("2".into(), "1".into()) ; "start above end")]
         #[test_case("1+",   2..2, ErrorKind::ExpectedRangeLength                       ; "start no length")]
         #[test_case("1+ab", 2..4, ErrorKind::ExpectedRangeLength                       ; "start no length but chars")]

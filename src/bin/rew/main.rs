@@ -103,6 +103,7 @@ fn run(cli: &Cli, io: &Io) -> Result {
                 if let Some(hint) = error.kind.hint() {
                     writeln!(stderr)?;
                     let message = match hint {
+                        parse::ErrorHint::RegexSyntax => help::REGEX_HINT,
                         parse::ErrorHint::PatternSyntax => help::PATTERN_HINT,
                         parse::ErrorHint::FilterUsage => help::FILTERS_HINT,
                     };

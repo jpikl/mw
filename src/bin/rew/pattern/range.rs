@@ -100,12 +100,12 @@ impl<T: RangeType> Range<T> {
                 }
             }
 
+            Some(_) | None if T::EMPTY_ALLOWED => Ok(Self(T::Value::zero(), None)),
+
             Some(_) => Err(Error {
                 kind: ErrorKind::RangeInvalid(reader.peek_to_end().to_string()),
                 range: reader.position()..reader.end(),
             }),
-
-            None if T::EMPTY_ALLOWED => Ok(Self(T::Value::zero(), None)),
 
             None => Err(Error {
                 kind: ErrorKind::ExpectedRange,

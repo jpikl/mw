@@ -8,7 +8,7 @@ use crate::pattern::integer::parse_integer;
 use crate::pattern::number::NumberRange;
 use crate::pattern::padding::Padding;
 use crate::pattern::reader::Reader;
-use crate::pattern::regex::RegexHolder;
+use crate::pattern::regex::RegexRange;
 use crate::pattern::repeat::Repetition;
 use crate::pattern::replace::{EmptySubstitution, RegexSubstitution, StringSubstitution};
 use crate::pattern::substr::CharIndexRange;
@@ -41,7 +41,8 @@ pub enum Filter {
     ReplaceFirst(StringSubstitution),
     ReplaceAll(StringSubstitution),
     ReplaceEmpty(EmptySubstitution),
-    RegexMatch(RegexHolder),
+    RegexMatch(RegexRange),
+    RegexMatchRev(RegexRange),
     RegexReplaceFirst(RegexSubstitution),
     RegexReplaceAll(RegexSubstitution),
     RegexSwitch(RegexSwitch),
@@ -99,7 +100,13 @@ impl Filter {
                 'r' => Ok(Self::ReplaceFirst(StringSubstitution::parse(reader)?)),
                 'R' => Ok(Self::ReplaceAll(StringSubstitution::parse(reader)?)),
                 '?' => Ok(Self::ReplaceEmpty(EmptySubstitution::parse(reader)?)),
-                '=' => Ok(Self::RegexMatch(RegexHolder::parse(reader)?)),
+                '=' => {
+                    if reader.read_expected(REVERSE_INDEX) {
+                        Ok(Self::RegexMatchRev(RegexRange::parse(reader)?))
+                    } else {
+                        Ok(Self::RegexMatch(RegexRange::parse(reader)?))
+                    }
+                }
                 's' => Ok(Self::RegexReplaceFirst(RegexSubstitution::parse(reader)?)),
                 'S' => Ok(Self::RegexReplaceAll(RegexSubstitution::parse(reader)?)),
                 '@' => Ok(Self::RegexSwitch(RegexSwitch::parse(reader)?)),
@@ -153,7 +160,8 @@ impl Filter {
             Self::ReplaceFirst(substitution) => Ok(substitution.replace_first(&value)),
             Self::ReplaceAll(substitution) => Ok(substitution.replace_all(&value)),
             Self::ReplaceEmpty(substitution) => Ok(substitution.replace(value)),
-            Self::RegexMatch(regex) => Ok(regex.first_match(&value)),
+            Self::RegexMatch(range) => Ok(range.find(&value)),
+            Self::RegexMatchRev(range) => Ok(range.find_rev(&value)),
             Self::RegexReplaceFirst(substitution) => Ok(substitution.replace_first(&value)),
             Self::RegexReplaceAll(substitution) => Ok(substitution.replace_all(&value)),
             Self::RegexSwitch(switch) => Ok(switch.eval(&value).to_string()),
@@ -210,8 +218,9 @@ impl fmt::Display for Filter {
             Self::ReplaceEmpty(substitution) => {
                 write!(formatter, "Replace {}", substitution)
             }
-            Self::RegexMatch(substitution) => {
-                write!(formatter, "Match of regular expression '{}'", substitution)
+            Self::RegexMatch(_) => write!(formatter, "TODO"),
+            Self::RegexMatchRev(_) => {
+                write!(formatter, "TODO backward")
             }
             Self::RegexReplaceFirst(substitution) => write!(
                 formatter,
@@ -292,8 +301,8 @@ mod tests {
         #[test_case("&-1/[0-9", 4..8, E::RegexInvalid(AnyString::any())              ; "field rev regex invalid")]
         #[test_case("r",        1..1, E::ExpectedSubstitution                        ; "replace expected substitution")]
         #[test_case("R",        1..1, E::ExpectedSubstitution                        ; "replace all expected substitution")]
-        #[test_case("=",        1..1, E::ExpectedRegex                               ; "regex match expected regex")]
-        #[test_case("=[0",      1..3, E::RegexInvalid(AnyString::any())              ; "regex match invalid regex")]
+        // #[test_case("=",        1..1, E::ExpectedRegex                               ; "regex match expected regex")]
+        // #[test_case("=[0",      1..3, E::RegexInvalid(AnyString::any())              ; "regex match invalid regex")]
         #[test_case("s",        1..1, E::ExpectedSubstitution                        ; "regex replace expected substitution")]
         #[test_case("s/[0/",    2..4, E::RegexInvalid(AnyString::any())              ; "regex replace invalid regex")]
         #[test_case("S",        1..1, E::ExpectedSubstitution                        ; "regex replace all expected substitution")]
@@ -343,7 +352,7 @@ mod tests {
         #[test_case("R/ab",         F::ReplaceAll(subst_string_1())         ; "remove all")]
         #[test_case("R/ab/x",       F::ReplaceAll(subst_string_2())         ; "replace all")]
         #[test_case("?x",           F::ReplaceEmpty(substitution_empty())   ; "replace empty")]
-        #[test_case("=[0-9]+",      F::RegexMatch("[0-9]+".into())          ; "regex match")]
+        // #[test_case("=[0-9]+",      F::RegexMatch("[0-9]+".into())          ; "regex match")]
         #[test_case("s/[0-9]+",     F::RegexReplaceFirst(subst_regex_1())   ; "regex remove first")]
         #[test_case("s/[0-9]+/x",   F::RegexReplaceFirst(subst_regex_2())   ; "regex replace first")]
         #[test_case("S/[0-9]+",     F::RegexReplaceAll(subst_regex_1())     ; "regex remove all")]
@@ -435,7 +444,7 @@ mod tests {
         #[test_case("abcd_abcd",     F::ReplaceAll(subst_string_1()),        "cd_cd"    ; "remove all")]
         #[test_case("abcd_abcd",     F::ReplaceAll(subst_string_2()),        "xcd_xcd"  ; "replace all")]
         #[test_case("",              F::ReplaceEmpty(substitution_empty()),  "x"        ; "replace empty")]
-        #[test_case("a123y",         F::RegexMatch("[0-9]+".into()),         "123"      ; "regex match")]
+        // #[test_case("a123y",         F::RegexMatch("[0-9]+".into()),         "123"      ; "regex match")]
         #[test_case("12_34",         F::RegexReplaceFirst(subst_regex_1()),  "_34"      ; "regex remove first")]
         #[test_case("12_34",         F::RegexReplaceFirst(subst_regex_2()),  "x_34"     ; "regex replace first")]
         #[test_case("12_34",         F::RegexReplaceAll(subst_regex_1()),    "_"        ; "regex remove all")]
@@ -515,7 +524,7 @@ mod tests {
     #[test_case(F::ReplaceAll(subst_string_1()),        "Replace all 'ab' with ''"                                      ; "remove all")]
     #[test_case(F::ReplaceAll(subst_string_2()),        "Replace all 'ab' with 'x'"                                     ; "replace all")]
     #[test_case(F::ReplaceEmpty(substitution_empty()),  "Replace empty with 'x'"                                        ; "replace empty")]
-    #[test_case(F::RegexMatch("[0-9]+".into()),         "Match of regular expression '[0-9]+'"                          ; "regex match")]
+    // #[test_case(F::RegexMatch("[0-9]+".into()),         "Match of regular expression '[0-9]+'"                          ; "regex match")]
     #[test_case(F::RegexReplaceFirst(subst_regex_1()),  "Replace first match of regular expression '[0-9]+' with ''"    ; "regex remove first")]
     #[test_case(F::RegexReplaceFirst(subst_regex_2()),  "Replace first match of regular expression '[0-9]+' with 'x'"   ; "regex replace first")]
     #[test_case(F::RegexReplaceAll(subst_regex_1()),    "Replace all matches of regular expression '[0-9]+' with ''"    ; "regex remove all")]
